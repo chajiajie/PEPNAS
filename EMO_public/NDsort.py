@@ -24,11 +24,8 @@ def NDSort(PopObj,Remain_Num):
                             break
                 if not Dominated:
                     FrontNO[0,i] = MaxFNO
-    # temp=np.loadtxt("temp.txt")
-    # print((FrontNO==temp).all())
     front_temp = np.zeros((1,N))
     front_temp[0, rank] = FrontNO
-    # FrontNO[0, rank] = FrontNO 不能这么操作，因为 FrontNO值 在 发生改变 ，会影响后续的结果
 
 
     return front_temp, MaxFNO
