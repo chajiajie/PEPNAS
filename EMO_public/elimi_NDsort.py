@@ -1,8 +1,9 @@
 import numpy as np
 from EMO_public import sortrows
+
 def NDSort(PopObj,Remain_Num):
 
-    N,M = PopObj.shape#（20，2）
+    N,M = PopObj.shape
     FrontNO = np.inf*np.ones((1, N))
     MaxFNO = 0
     PopObj, rank = sortrows.sortrows(PopObj,order="descend")
@@ -23,11 +24,9 @@ def NDSort(PopObj,Remain_Num):
                             break
                 if not Dominated:
                     FrontNO[0,i] = MaxFNO
-    # temp=np.loadtxt("temp.txt")
-    # print((FrontNO==temp).all())
     front_temp = np.zeros((1,N))
     front_temp[0, rank] = FrontNO
-    # FrontNO[0, rank] = FrontNO
 
 
     return front_temp, MaxFNO
+
