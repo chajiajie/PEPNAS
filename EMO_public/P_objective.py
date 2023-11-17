@@ -28,7 +28,6 @@ def P_DTLZ(Operation,Problem,M,Input):
         Population = Input
         FunctionValue = np.zeros((Population.shape[0], M))
         if Problem == "DTLZ1":
-            # g = 100*(K_select+np.sum( (Population[:, M-1:] - 0.5)**2 - np.cos(20*np.pi*(Population[:, M-1:] - 0.5)), axis=1, keepdims = True))
             g = 100*(K_select+np.sum( (Population[:, M-1:] - 0.5)**2 - np.cos(20*np.pi*(Population[:, M-1:] - 0.5)), axis=1))
             for i in range(M):
                 FunctionValue[:, i] = 0.5*np.multiply( np.prod(Population[:, :M-i-1], axis=1), (1+g))
