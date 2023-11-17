@@ -2,7 +2,7 @@ import numpy as np
 from public import sortrows
 
 def F_NDSort(PopObj,Operation):
-    list = ["all", "half", "first"] # list 与 array 不同, matlab 中大多数操作 仅支持 np.array
+    list = ["all", "half", "first"]
     kind = list.index(Operation)
     N,M = PopObj.shape
     FrontNO = np.inf*np.ones((1, N))
@@ -25,11 +25,10 @@ def F_NDSort(PopObj,Operation):
                             break
                 if not Dominated:
                     FrontNO[0,i] = MaxFNO
-    # temp=np.loadtxt("temp.txt")
-    # print((FrontNO==temp).all())
+
     front_temp = np.zeros((1,N))
     front_temp[0, rank] = FrontNO
-    # FrontNO[0, rank] = FrontNO 不能这么操作，因为 FrontNO值 在 发生改变 ，会影响后续的结果
+
 
 
     return front_temp, MaxFNO
