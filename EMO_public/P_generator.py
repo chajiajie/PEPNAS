@@ -2,13 +2,6 @@ import numpy as np
 
 
 def P_generator(MatingPool, Boundary, Coding, MaxOffspring, op_index):
-    # % 交叉, 变异并生成新的种群
-    # % 输入: MatingPool, 交配池, 其中每第i个和第i + 1
-    # 个个体交叉产生两个子代, i为奇数
-    # % Boundary, 决策空间, 其第一行为空间中每维的上界, 第二行为下界
-    # % Coding, 编码方式, 不同的编码方式采用不同的交叉变异方法
-    # % MaxOffspring, 返回的子代数目, 若缺省则返回所有产生的子代, 即和交配池的大小相同
-    # % 输出: Offspring, 产生的子代新种群
 
     Num_Op = max(Boundary[0]) + 1  # kexuan number of operations，12
 
@@ -24,7 +17,7 @@ def P_generator(MatingPool, Boundary, Coding, MaxOffspring, op_index):
         Offspring = np.zeros((N, D))
         for i in range(0, N, 2):
             beta = np.zeros((D,))
-            miu = np.random.random((D,))  # np.random.rand(D,)
+            miu = np.random.random((D,))
             beta[miu <= 0.5] = (2 * miu[miu <= 0.5]) ** (1 / (DisC + 1))
             beta[miu > 0.5] = (2 - 2 * miu[miu > 0.5]) ** (-1 / (DisC + 1))
             beta = beta * ((-1) ** (np.random.randint(0, 2, (D,))))
@@ -35,8 +28,6 @@ def P_generator(MatingPool, Boundary, Coding, MaxOffspring, op_index):
             Offspring[i + 1, :] = ((MatingPool[i, :] + MatingPool[i + 1, :]) / 2) - (
                 np.multiply(beta, (MatingPool[i, :] - MatingPool[i + 1, :]) / 2))
         Offspring_temp = Offspring[:MaxOffspring, :]
-        # print(range(MaxOffspring,Offspring.shape[0]))
-        # np.delete(Offspring, range(MaxOffspring,Offspring.shape[0]), axis=0) 并没有真正的对 对象进行操作，仅仅你是个浅操作
         Offspring = Offspring_temp
 
         if MaxOffspring == 1:
@@ -46,7 +37,6 @@ def P_generator(MatingPool, Boundary, Coding, MaxOffspring, op_index):
             MaxValue = np.tile(Boundary[0, :], (MaxOffspring, 1))
             MinValue = np.tile(Boundary[1, :], (MaxOffspring, 1))
 
-        # np.bitwise_and 用于矩阵的逻辑运算
         k = np.random.random((MaxOffspring, D))
         miu = np.random.random((MaxOffspring, D))
         Temp = np.bitwise_and(k <= ProM, miu < 0.5)
@@ -76,13 +66,13 @@ def P_generator(MatingPool, Boundary, Coding, MaxOffspring, op_index):
 
         Offspring = []
 
-        cross_ratio = 0.1  # 0.2
+        cross_ratio = 0.1
 
         for i in range(0, N, 2):
             P1 = MatingPool[i].dec.copy()
             P2 = MatingPool[i + 1].dec.copy()
 
-            cross_flag = np.random.rand(1) < cross_ratio  # 判断是否交叉
+            cross_flag = np.random.rand(1) < cross_ratio
 
             for j in range(2):
                 p1 = np.array(P1[j]).copy()
@@ -93,17 +83,11 @@ def P_generator(MatingPool, Boundary, Coding, MaxOffspring, op_index):
                 L_flag = L1 > L2
                 large_L = L1 if L_flag else L2
                 common_L = L2 if L_flag else L1
-                cross_L = np.random.choice(common_L)  # 在短的个体选择交叉点
+                cross_L = np.random.choice(common_L)
 
                 if cross_flag:
                     p1[:cross_L], p2[:cross_L] = p2[:cross_L], p1[:cross_L]
                 print("**********************结束交叉**********************")
-                # ----------------------------mutation-------------------------------
-                # muta_indicator_1 = np.random.rand(2,common_L)<1 / common_L
-                # muta_indicator_2 = np.random.rand(large_L,) <2 / common_L
-                # muta_indicator_2[:common_L] = muta_indicator_1[1]
-                # muta_indicator_1 = muta_indicator_1[0]
-                # 开始变异
                 print("**********************开始变异**********************")
                 muta_indicator_1, muta_indicator_2 = mutation_indicator(p1.copy(), p2.copy(), op_index)
 
@@ -146,7 +130,6 @@ def start_add_mutation(solution_1, solution_2, op_index, Num_op):
 
 def mutation_add(solution, op_index, Num_op):
     sign = 0
-    # op_index = [2, 6, 11, 17, 24, 32, 41, 51, 62, 74, 87, 101]
     op_index_solution = [i for i in op_index if i < len(solution)]
     if len(op_index_solution) < 12:
         select_index = op_index.index(op_index_solution[-1])
@@ -163,14 +146,14 @@ def mutation_add(solution, op_index, Num_op):
 
 def mutation_indicator(solution_1, solution_2, op_index):
     op_index_1 = [i for i in op_index if
-                  i < len(solution_1)]  # op_index = [2, 6, 11, 17, 24, 32, 41, 51, 62, 74, 87, 101]
+                  i < len(solution_1)]
     op_index_2 = [i for i in op_index if i < len(solution_2)]
 
     mutation_indicator_1 = np.random.rand(len(solution_1), ) < 3 / (
-                len(solution_1) - len(op_index_1))  # 产生len(solution_1)个数在0到1内
+                len(solution_1) - len(op_index_1))
     mutation_indicator_2 = np.random.rand(len(solution_2), ) < 3 / (len(solution_2) - len(op_index_2))
 
-    mutation_indicator_1[op_index_1] = np.random.rand(len(op_index_1), ) < 1 / len(op_index_1)  # 判断含有操作的位
+    mutation_indicator_1[op_index_1] = np.random.rand(len(op_index_1), ) < 1 / len(op_index_1)
     mutation_indicator_2[op_index_2] = np.random.rand(len(op_index_2), ) < 1 / len(op_index_2)
 
     if len(mutation_indicator_1) <= len(mutation_indicator_2):
